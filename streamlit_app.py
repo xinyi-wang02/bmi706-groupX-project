@@ -62,7 +62,7 @@ def load_data_preprocess():
     return alc_car_bp_asp
 
 df = load_data_preprocess()
-st.write("## Exploring the association between alcohol use, asprin use and cardiovascular symptoms with NHANES dataset")
+st.write("## Exploring the associations between alcohol use, asprin use and cardiovascular symptoms with NHANES dataset")
 
 alt.data_transformers.disable_max_rows()
 
@@ -129,7 +129,23 @@ heatmap = alt.Chart(df3).mark_rect().encode(
     height=400
 ).interactive()
 
+## Bubble plot for asprin use vs chest pain chances ##
+columns_to_analyze4 = ['RXQ515','CDQ001']
+df4 = df[columns_to_analyze4].groupby(['CDQ001', 'RXQ515']).size().reset_index(name='count')
+
+bubble = alt.Chart(df4).mark_circle().encode(
+    x=alt.X('CDQ001:O', title='Whether have chest pain'),
+    y=alt.Y('RXQ515:O', title='RXQ515'),
+    size=alt.Size('count:Q', title='Count'),
+    color=alt.Color('count:Q', title='Count', scale=alt.Scale(scheme='viridis')),
+    tooltip=['CDQ001', 'RXQ515', 'count']
+).properties(
+    width=300,
+    height=300
+).interactive()
+
 
 st.altair_chart(alc_chart, use_container_width=True)
 st.altair_chart(pain_chart, use_container_width=True)
 st.altair_chart(heatmap, use_container_width=True)
+st.altair_chart(bubble, use_container_width=True)
