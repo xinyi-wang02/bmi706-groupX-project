@@ -92,8 +92,8 @@ alc_chart = alt.Chart(agg_data1).mark_arc().encode(
     tooltip=['Frequency', 'Count']
 ).properties(
     title='Frequency of Alcohol intake within a year',
-    width=400,
-    height=200
+    width=600,
+    height=400
 ).interactive()
 
 ## Count of Different Symptoms in Chest Pain ##
