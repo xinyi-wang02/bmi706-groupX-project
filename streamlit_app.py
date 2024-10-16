@@ -6,10 +6,10 @@ import streamlit as st
 @st.cache
 def load_data_preprocess():
     ## load data ##
-    alcohol, alc_meta = pyreadstat.read_xport('D:/Next to classical/BMI706/group project/Data/P_ALQ.XPT')
-    cardio, car_meta = pyreadstat.read_xport('D:/Next to classical/BMI706/group project/Data/P_CDQ.XPT')
-    bp_chol, bp_meta = pyreadstat.read_xport('D:/Next to classical/BMI706/group project/Data/P_BPQ.XPT')
-    asp, asp_meta = pyreadstat.read_xport('D:/Next to classical/BMI706/group project/Data/P_RXQASA.XPT')
+    alcohol, alc_meta = pyreadstat.read_xport('P_ALQ.XPT')
+    cardio, car_meta = pyreadstat.read_xport('P_CDQ.XPT')
+    bp_chol, bp_meta = pyreadstat.read_xport('P_BPQ.XPT')
+    asp, asp_meta = pyreadstat.read_xport('P_RXQASA.XPT')
 
     ## merge the data frames ##
     alc_car = pd.merge(alcohol, cardio, on='SEQN', how='inner')
