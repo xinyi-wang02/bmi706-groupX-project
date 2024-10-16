@@ -84,12 +84,12 @@ category_mapping = {
     None: 'Missing'}
 
 agg_data1 = df['alc_Frequency'].value_counts().reset_index()
-agg_data1.columns = ['alc_Frequency', 'Count']
+agg_data1.columns = ['Frequency', 'Count']
 
-alc_chart = alt.Chart(agg_data1).mark_bar().encode(
-    x=alt.X('alc_Frequency:N', title='Frequency of Alcohol intake', sort=list(category_mapping.values())),
-    y=alt.Y('count():Q', title='Count'),
-    tooltip=['alc_Frequency', 'count()']
+alc_chart = alt.Chart(agg_data1).mark_arc().encode(
+    theta=alt.Theta(field='Count', type='quantitative', title='Count'),
+    color=alt.Color(field='Frequency', type='nominal', sort=list(category_mapping.values()), scale=alt.Scale(scheme='tableau20')),
+    tooltip=['Frequency', 'Count']
 ).properties(
     title='Frequency of Alcohol intake within a year',
     width=600,
