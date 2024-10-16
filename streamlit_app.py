@@ -142,6 +142,9 @@ bubble = alt.Chart(df4).mark_circle().encode(
 ).properties(
     width=300,
     height=300
+).configure_view(
+    #strokeWidth=0,  
+    fill='white'
 ).interactive()
 
 
