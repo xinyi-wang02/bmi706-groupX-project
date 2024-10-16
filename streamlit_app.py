@@ -84,7 +84,7 @@ alc_chart = alt.Chart(agg_data1).mark_bar().encode(
 ).interactive()
 
 ## Count of Different Symptoms in Chest Pain ##
-columns_to_analyze2 = ['CDQ001','CDQ006','secondary_symptom']
+columns_to_analyze2 = ['secondary_symptom']
 df1 = df[columns_to_analyze2]
 pain_df = df1[df1['secondary_symptom'].notna()]
 
