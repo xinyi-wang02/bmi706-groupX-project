@@ -62,7 +62,7 @@ def load_data_preprocess():
     return alc_car_bp_asp
 
 df = load_data_preprocess()
-st.write("## Exploring relationships between alcohol use, cardiovascular disease, blood pressure, and asprin use with NHANES dataset")
+st.write("## Exploring the association between alcohol use, asprin use and cardiovascular symptoms with NHANES dataset")
 
 alt.data_transformers.disable_max_rows()
 
@@ -114,5 +114,22 @@ pain_chart = alt.Chart(agg_data2).mark_arc().encode(
     height=200
 ).interactive()
 
+## Heatmap for alcohol intake vs chest pain chances ##
+columns_to_analyze3 = ['alc_Frequency','CDQ001']
+df3 = df[columns_to_analyze3]
+
+heatmap = alt.Chart(df3).mark_rect().encode(
+    x=alt.X('alc_Frequency:O', title='Alcohol Frequency',sort=list(category_mapping.values())),
+    y=alt.Y('CDQ001:O', title='Chest pain'),
+    color=alt.Color('count():Q', title='Count'),
+    tooltip=['alc_Frequency', 'CDQ001', 'count()']
+).properties(
+    title='Interactive Heat Map of Alcohol Frequency and Chest pain',
+    width=400,
+    height=100
+).interactive()
+
+
 st.altair_chart(alc_chart, use_container_width=True)
 st.altair_chart(pain_chart, use_container_width=True)
+at.altair_chart(heatmap, use_container_width=True)
