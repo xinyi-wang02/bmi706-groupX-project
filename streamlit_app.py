@@ -132,4 +132,4 @@ heatmap = alt.Chart(df3).mark_rect().encode(
 
 st.altair_chart(alc_chart, use_container_width=True)
 st.altair_chart(pain_chart, use_container_width=True)
-st.altair_chart(heatmap, use_container_width=False)
+st.altair_chart(heatmap, use_container_width=True)
