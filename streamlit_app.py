@@ -110,8 +110,8 @@ pain_chart = alt.Chart(agg_data2).mark_arc().encode(
     tooltip=['secondary_symptom', 'Count']
 ).properties(
     title='Count of Different Symptoms',
-    width=400,
-    height=200
+    width=600,
+    height=400
 ).interactive()
 
 ## Heatmap for alcohol intake vs chest pain chances ##
