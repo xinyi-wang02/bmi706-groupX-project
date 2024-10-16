@@ -126,7 +126,7 @@ heatmap = alt.Chart(df3).mark_rect().encode(
 ).properties(
     title='Interactive Heat Map of Alcohol Frequency and Chest pain',
     width=400,
-    height=200
+    height=400
 ).interactive()
 
 
