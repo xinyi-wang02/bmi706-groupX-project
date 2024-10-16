@@ -27,6 +27,19 @@ def load_data_preprocess():
     alc_car_bp_asp ['RXQ515'] = alc_car_bp_asp ['RXQ515'].replace({1:'Take Aspirin',2: 'Do not take aspirin', 3: 'Sometimes Take Aspirin',4: 'Stopped aspirin use due to side effects', 9: "Don't know"})
     alc_car_bp_asp ['RXQ520'] = alc_car_bp_asp ['RXQ520'].replace({1:'Yes',2: 'No', 7: 'Refused', 9: "Don't know"})
 
+    ## interpret cardiovascular related responses ##
+    alc_car_bp_asp ['CDQ009A'] = alc_car_bp_asp ['CDQ009A'].replace({1: 'Pain in right arm', 77: 'Refused', 99: "Don't know"})
+    alc_car_bp_asp ['CDQ009B'] = alc_car_bp_asp ['CDQ009B'].replace({2: 'Pain in right chest'})
+    alc_car_bp_asp ['CDQ009C'] = alc_car_bp_asp ['CDQ009C'].replace({3: 'Pain in neck'})
+    alc_car_bp_asp ['CDQ009D'] = alc_car_bp_asp ['CDQ009D'].replace({4: 'Pain in upper sternum'})
+    alc_car_bp_asp ['CDQ009E'] = alc_car_bp_asp ['CDQ009E'].replace({5: 'Pain in lower sternum'})
+    alc_car_bp_asp ['CDQ009F'] = alc_car_bp_asp ['CDQ009F'].replace({6: 'Pain in left chest'})
+    alc_car_bp_asp ['CDQ009G'] = alc_car_bp_asp ['CDQ009G'].replace({7: 'Pain in left arm'})
+    alc_car_bp_asp ['CDQ009H'] = alc_car_bp_asp ['CDQ009H'].replace({8: 'Pain in epigastric area'})
+
+    alc_car_bp_asp['secondary_symptom'] = alc_car_bp_asp['CDQ009A'].fillna(alc_car_bp_asp['CDQ009B']).fillna(alc_car_bp_asp['CDQ009C']).fillna(alc_car_bp_asp['CDQ009D']).fillna(alc_car_bp_asp['CDQ009E']).fillna(alc_car_bp_asp['CDQ009F']).fillna(alc_car_bp_asp['CDQ009G']).fillna(alc_car_bp_asp['CDQ009H'])
+    alc_car_bp_asp = alc_car_bp_asp.drop(columns=['CDQ009A', 'CDQ009B', 'CDQ009C', 'CDQ009D', 'CDQ009E', 'CDQ009F', 'CDQ009G', 'CDQ009H'])
+
     ## interpret alcohol related responses ##
     category_mapping = {
     0: 'Never in the last year',
@@ -84,7 +97,7 @@ alc_chart = alt.Chart(agg_data1).mark_bar().encode(
 ).interactive()
 
 ## Count of Different Symptoms in Chest Pain ##
-columns_to_analyze2 = ['secondary_symptom']
+columns_to_analyze2 = ['CDQ001','CDQ006','secondary_symptom']
 df1 = df[columns_to_analyze2]
 pain_df = df1[df1['secondary_symptom'].notna()]
 
