@@ -1,128 +1,105 @@
+import pyreadstat
 import altair as alt
 import pandas as pd
 import streamlit as st
 
-### P1.2 ###
-
 @st.cache
-def load_data():
-    ## {{ CODE HERE }} ##
-    cancer_df = pd.read_csv("https://raw.githubusercontent.com/hms-dbmi/bmi706-2022/main/cancer_data/cancer_ICD10.csv").melt( 
-        id_vars=["Country", "Year", "Cancer", "Sex"],
-        var_name="Age",
-        value_name="Deaths",
-    )
+def load_data_preprocess():
+    ## load data ##
+    alcohol, alc_meta = pyreadstat.read_xport('D:/Next to classical/BMI706/group project/Data/P_ALQ.XPT')
+    cardio, car_meta = pyreadstat.read_xport('D:/Next to classical/BMI706/group project/Data/P_CDQ.XPT')
+    bp_chol, bp_meta = pyreadstat.read_xport('D:/Next to classical/BMI706/group project/Data/P_BPQ.XPT')
+    asp, asp_meta = pyreadstat.read_xport('D:/Next to classical/BMI706/group project/Data/P_RXQASA.XPT')
 
-    pop_df = pd.read_csv("https://raw.githubusercontent.com/hms-dbmi/bmi706-2022/main/cancer_data/population.csv").melt(
-        id_vars=["Country", "Year", "Sex"],
-        var_name="Age",
-        value_name="Pop",
-    )
+    ## merge the data frames ##
+    alc_car = pd.merge(alcohol, cardio, on='SEQN', how='inner')
+    alc_car_bp = pd.merge(alc_car, bp_chol, on='SEQN', how='inner')
+    alc_car_bp_asp = pd.merge(alc_car_bp, asp, on='SEQN', how='inner')
 
-    df = pd.merge(left=cancer_df, right=pop_df, how="left")
-    df["Pop"] = df.groupby(["Country", "Sex", "Age"])["Pop"].fillna(method="bfill")
-    df.dropna(inplace=True)
+    ## interpret blood pressure related responses ##
+    alc_car_bp_asp ['BPQ020'] = alc_car_bp_asp ['BPQ020'].replace({1:'With hypertension',2: 'Without hypertension', 7: 'Refused', 9: "Don't know"})
+    alc_car_bp_asp ['BPQ040A'] = alc_car_bp_asp ['BPQ040A'].replace({1:'Take hypertension prescription',2: 'Do not take hypertension prescription', 7: 'Refused', 9: "Don't know"})
+    alc_car_bp_asp ['BPQ080'] = alc_car_bp_asp ['BPQ080'].replace({1:'With high cholesterol',2: 'Without high cholesterol', 7: 'Refused', 9: "Don't know"})
+    alc_car_bp_asp ['BPQ100D'] = alc_car_bp_asp ['BPQ100D'].replace({1:'Take prescriptn for cholesterol',2: 'Do not take prescriptn for cholesterol', 7: 'Refused', 9: "Don't know"})
 
-    df = df.groupby(["Country", "Year", "Cancer", "Age", "Sex"]).sum().reset_index()
-    df["Rate"] = df["Deaths"] / df["Pop"] * 100_000
+    ## interpret asprin related responses ##
+    alc_car_bp_asp ['RXQ510'] = alc_car_bp_asp ['RXQ510'].replace({1:'Yes', 2: 'No', 7: 'Refused', 9: "Don't know"})
+    alc_car_bp_asp ['RXQ515'] = alc_car_bp_asp ['RXQ515'].replace({1:'Take Aspirin',2: 'Do not take aspirin', 3: 'Sometimes Take Aspirin',4: 'Stopped aspirin use due to side effects', 9: "Don't know"})
+    alc_car_bp_asp ['RXQ520'] = alc_car_bp_asp ['RXQ520'].replace({1:'Yes',2: 'No', 7: 'Refused', 9: "Don't know"})
 
-    return df
+    ## interpret alcohol related responses ##
+    category_mapping = {
+    0: 'Never in the last year',
+    1: 'Every day',
+    2: 'Nearly every day',
+    3: '3 to 4 times a week',
+    4: '2 times a week',
+    5: 'Once a week',
+    6: '2 to 3 times a month',
+    7: 'Once a month',
+    8: '7 to 11 times in the last year',
+    9: '3 to 6 times in the last year',
+    10: '1 to 2 times in the last year',
+    77: 'Refused',
+    99: 'Don\'t know',
+    None: 'Missing'}
+    alc_car_bp_asp['alc_Frequency'] = alc_car_bp_asp['ALQ121'].map(category_mapping)
+    alc_car_bp_asp ['CDQ001'] = alc_car_bp_asp ['CDQ001'].replace({1:'Yes', 2: 'No', 7: 'Refused', 9: "Don't know"})
 
+    return alc_car_bp_asp
 
-# Uncomment the next line when finished
-df = load_data()
+df = load_data_preprocess()
+st.write("## Exploring relationships between alcohol use, cardiovascular disease, blood pressure, and asprin use with NHANES dataset")
 
-### P1.2 ###
-st.write("## Age-specific cancer mortality rates")
+alt.data_transformers.disable_max_rows()
 
-### P2.1 ###
-# replace with st.slider
-min_year = df['Year'].min()
-max_year = df['Year'].max()
-year = st.slider("Select a Year", min_value=min_year, max_value=max_year, step=1)
-subset = df[df["Year"] == year]
-### P2.1 ###
+## Frequency of Alcohol intake within a year ##
+category_mapping = {
+    0: 'Never in the last year',
+    1: 'Every day',
+    2: 'Nearly every day',
+    3: '3 to 4 times a week',
+    4: '2 times a week',
+    5: 'Once a week',
+    6: '2 to 3 times a month',
+    7: 'Once a month',
+    8: '7 to 11 times in the last year',
+    9: '3 to 6 times in the last year',
+    10: '1 to 2 times in the last year',
+    77: 'Refused',
+    99: 'Don\'t know',
+    None: 'Missing'}
 
+agg_data1 = df['alc_Frequency'].value_counts().reset_index()
+agg_data1.columns = ['alc_Frequency', 'Count']
 
-### P2.2 ###
-# replace with st.radio
-sex = st.radio("Select Sex", options=df['Sex'].unique())
-subset = subset[subset["Sex"] == sex]
-### P2.2 ###
-
-
-### P2.3 ###
-# replace with st.multiselect
-# (hint: can use current hard-coded values below as as `default` for selector)
-countries = [
-    "Austria",
-    "Germany",
-    "Iceland",
-    "Spain",
-    "Sweden",
-    "Thailand",
-    "Turkey",
-]
-selected_countries = st.multiselect(
-    "Select Countries",
-    options=df['Country'].unique(),
-    default=countries
-)
-subset = subset[subset["Country"].isin(selected_countries)]
-### P2.3 ###
-
-
-### P2.4 ###
-# replace with st.selectbox
-cancer = st.selectbox(
-    "Select Cancer Type",
-    options=df['Cancer'].unique(),
-    index=0
-)
-subset = subset[subset["Cancer"] == cancer]
-### P2.4 ###
-
-
-### P2.5 ###
-ages = [
-    "Age <5",
-    "Age 5-14",
-    "Age 15-24",
-    "Age 25-34",
-    "Age 35-44",
-    "Age 45-54",
-    "Age 55-64",
-    "Age >64",
-]
-
-chart = alt.Chart(subset).mark_rect().encode(
-    x=alt.X("Age", sort=ages),
-    y=alt.Y('Country:N', title='Country'),
-    color=alt.Color('Rate:Q', title='Mortality rate per 100k',
-        scale=alt.Scale(type='log', domain=[0.01, 1000], clamp=True),  
-        legend=alt.Legend(title="Mortality rate per 100k")
-    ),
-    tooltip=["Rate"],
+alc_chart = alt.Chart(agg_data1).mark_bar().encode(
+    x=alt.X('alc_Frequency:N', title='Frequency of Alcohol intake', sort=list(category_mapping.values())),
+    y=alt.Y('count():Q', title='Count'),
+    tooltip=['alc_Frequency', 'count()']
 ).properties(
-    title=f"{cancer} mortality rates for {'males' if sex == 'M' else 'females'} in {year}",
-)
+    title='Frequency of Alcohol intake within a year',
+    width=600,
+    height=400
+).interactive()
 
-pop_chart = alt.Chart(subset).mark_bar().encode(
-    y=alt.Y('Country:N', sort='-x'), 
-    x=alt.X('Pop:Q', title='Sum of population size'),
-    tooltip=[alt.Tooltip('Country'), alt.Tooltip('Pop:Q')]
+## Count of Different Symptoms in Chest Pain ##
+columns_to_analyze2 = ['CDQ001','CDQ006','secondary_symptom']
+df1 = alc_car_bp_asp[columns_to_analyze2]
+pain_df = df1[df1['secondary_symptom'].notna()]
+
+agg_data2 = pain_df['secondary_symptom'].value_counts().reset_index()
+agg_data2.columns = ['secondary_symptom', 'Count']
+
+pain_chart = alt.Chart(agg_data2).mark_arc().encode(
+    theta=alt.Theta(field='Count', type='quantitative', title='Count'),
+    color=alt.Color(field='secondary_symptom', type='nominal'),
+    tooltip=['secondary_symptom', 'Count']
 ).properties(
-    title='Population Size by Country'
-)
-### P2.5 ###
+    title='Count of Different Symptoms',
+    width=400,
+    height=200
+).interactive()
 
-st.altair_chart(chart, use_container_width=True)
-st.altair_chart(pop_chart, use_container_width=True)
-
-countries_in_subset = subset["Country"].unique()
-if len(countries_in_subset) != len(countries):
-    if len(countries_in_subset) == 0:
-        st.write("No data avaiable for given subset.")
-    else:
-        missing = set(countries) - set(countries_in_subset)
-        st.write("No data available for " + ", ".join(missing) + ".")
+st.altair_chart(alc_chart, use_container_width=True)
+st.altair_chart(pain_chart, use_container_width=True)
