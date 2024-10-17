@@ -90,11 +90,11 @@ agg_data1.columns = ['Frequency', 'Count']
 alc_cons = st.multiselect("Select Alcohol Consumptions", 
                           options=agg_data1['Frequency'].unique(), 
                           default=agg_data1['Frequency'].unique())
-subset = agg_data1[agg_data1['Frequency'] == alc_cons]
+subset = agg_data1[agg_data1['Frequency'].isin(alc_cons)]
 
 # Prepare data for the heatmap
 agg_data2 = df[['alc_Frequency', 'CDQ001']].groupby(['alc_Frequency', 'CDQ001']).size().reset_index(name='Count')
-subset2 = agg_data2[agg_data2['alc_Frequency'] == alc_cons]
+subset2 = agg_data2[agg_data2['alc_Frequency'].isin(alc_cons)]
 
 # Boxplot (Alcohol Frequency)
 alc_chart = alt.Chart(subset).mark_bar().encode(
