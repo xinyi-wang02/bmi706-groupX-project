@@ -113,7 +113,7 @@ alc_chart = alt.Chart(subset).mark_bar().encode(
     tooltip=['Frequency', 'Count']
 ).properties(
     title='Distribution of Alcohol Consumption Frequency Among Participants (2017-2020)',
-    width=600,
+    width=50,
     height=400
 )
 
@@ -125,7 +125,7 @@ heatmap = alt.Chart(subset2).mark_rect().encode(
     tooltip=['alc_Frequency', 'CDQ001', 'Count']
 ).properties(
     title='Interactive Heat Map of Alcohol Frequency and Chest Pain',
-    width=800,
+    width=50,
     height=400
 )
 
