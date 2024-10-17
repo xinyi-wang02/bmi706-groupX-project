@@ -140,7 +140,7 @@ heatmap = alt.Chart(agg_data2).mark_rect().encode(
 )
 
 # Display the charts side by side in Streamlit
-st.altair_chart(alt.hconcat(alc_chart, heatmap).resolve_scale(color='independent'))
+#st.altair_chart(alt.hconcat(alc_chart, heatmap).resolve_scale(color='independent'))
 
 ## Count of Different Symptoms in Chest Pain ##
 columns_to_analyze3 = ['CDQ001','CDQ006','secondary_symptom']
