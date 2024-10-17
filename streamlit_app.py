@@ -87,11 +87,14 @@ category_mapping = {
 # Prepare data for the pie chart
 agg_data1 = df['alc_Frequency'].value_counts().reset_index()
 agg_data1.columns = ['Frequency', 'Count']
+alc_cons = st.radio("Select Alcohol Consumptions", options=agg_data1['Frequency'].unique())
+subset = agg_data1[agg_data1["Frequency"] == alc_cons]
 
 # Prepare data for the heatmap
 agg_data2 = df[['alc_Frequency', 'CDQ001']].groupby(['alc_Frequency', 'CDQ001']).size().reset_index(name='Count')
+subset2 = agg_data2[agg_data2["Frequency"] == alc_cons]
 
-alc_chart = alt.Chart(agg_data1).mark_bar().encode(
+alc_chart = alt.Chart(subset).mark_bar().encode(
     x=alt.X(
         'Frequency:O', 
         title='Alcohol Consumption Frequency',
@@ -115,7 +118,7 @@ alc_chart = alt.Chart(agg_data1).mark_bar().encode(
 )
 
 # Heatmap (Alcohol Frequency vs Chest Pain)
-heatmap = alt.Chart(agg_data2).mark_rect().encode(
+heatmap = alt.Chart(subset2).mark_rect().encode(
     x=alt.X('alc_Frequency:O', title='Alcohol Frequency', sort=list(category_mapping.values())),
     y=alt.Y('CDQ001:O', title='Chest Pain'),
     color=alt.Color('Count:Q', title='Count', scale=alt.Scale(scheme='blues')),
