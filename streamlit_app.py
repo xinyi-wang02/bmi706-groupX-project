@@ -62,7 +62,7 @@ def load_data_preprocess():
     return alc_car_bp_asp
 
 df = load_data_preprocess()
-st.write("## Exploring the associations between alcohol use, asprin use and cardiovascular symptoms with NHANES dataset")
+st.write("## Exploring the associations between alcohol use, asprin use and cardiovascular symptoms with NHANES dataset (2017-2020)")
 
 alt.data_transformers.disable_max_rows()
 
@@ -83,11 +83,13 @@ category_mapping = {
     99: 'Don\'t know',
     None: 'Missing'}
 
-## Linked view of alcohol consumption population pie chart and heatmap ##
+## Linked view of alcohol consumption population bar chart and heatmap ##
 # Prepare data for the pie chart
 agg_data1 = df['alc_Frequency'].value_counts().reset_index()
 agg_data1.columns = ['Frequency', 'Count']
-alc_cons = st.radio("Select Alcohol Consumptions", options=agg_data1['Frequency'].unique())
+alc_cons = st.multiselect("Select Alcohol Consumptions", 
+                          options=agg_data1['Frequency'].unique(), 
+                          default=agg_data1['Frequency'].unique())
 subset = agg_data1[agg_data1['Frequency'] == alc_cons]
 
 # Prepare data for the heatmap
@@ -114,7 +116,7 @@ alc_chart = alt.Chart(subset).mark_bar().encode(
     ),
     tooltip=['Frequency', 'Count']
 ).properties(
-    title='Distribution of Alcohol Consumption Frequency Among Participants (2017-2020)',
+    title='Distribution of Alcohol Consumption Frequency Among Participants',
     width=300,
     height=600
 )
