@@ -83,55 +83,65 @@ category_mapping = {
     99: 'Don\'t know',
     None: 'Missing'}
 
+## Linked view of alcohol consumption population pie chart and heatmap ##
+# Prepare data for the pie chart
 agg_data1 = df['alc_Frequency'].value_counts().reset_index()
 agg_data1.columns = ['Frequency', 'Count']
 
+# Prepare data for the heatmap
+agg_data2 = df[['alc_Frequency', 'CDQ001']].groupby(['alc_Frequency', 'CDQ001']).size().reset_index(name='Count')
+
+# Create a selection object for linked interaction
+selection = alt.selection_multi(fields=['Frequency'], bind='legend')
+
+# Pie chart (Alcohol consumption frequency)
 alc_chart = alt.Chart(agg_data1).mark_arc().encode(
     theta=alt.Theta(field='Count', type='quantitative', title='Number of Participants'),
     color=alt.Color(
-        field='Frequency', 
-        type='nominal', 
-        sort=list(category_mapping.values()), 
+        field='Frequency',
+        type='nominal',
+        sort=list(category_mapping.values()),
         scale=alt.Scale(scheme='tableau20'),
-        legend=alt.Legend(title="Alcohol Consumption Frequency")
+        legend=alt.Legend(title="Alcohol Consumption")
     ),
     tooltip=['Frequency', 'Count']
+).add_selection(
+    selection
 ).properties(
-    title='Distribution of Alcohol Consumption Frequency Among Participants (Past Year)',
+    title='Distribution of Alcohol Consumption Frequency Among Participants (2017-2020)',
     width=600,
     height=400
-).interactive()
+)
+
+# Heatmap (Alcohol Frequency vs Chest Pain)
+heatmap = alt.Chart(agg_data2).mark_rect().encode(
+    x=alt.X('alc_Frequency:O', title='Alcohol Frequency', sort=list(category_mapping.values())),
+    y=alt.Y('CDQ001:O', title='Chest Pain'),
+    color=alt.Color('Count:Q', title='Count', scale=alt.Scale(scheme='blues')),
+    tooltip=['alc_Frequency', 'CDQ001', 'Count']
+).transform_filter(
+    selection  # Filter the heatmap based on the selection from the pie chart
+).properties(
+    title='Interactive Heat Map of Alcohol Frequency and Chest Pain',
+    width=800,
+    height=400
+)
 
 ## Count of Different Symptoms in Chest Pain ##
-columns_to_analyze2 = ['CDQ001','CDQ006','secondary_symptom']
-df1 = df[columns_to_analyze2]
-pain_df = df1[df1['secondary_symptom'].notna()]
+columns_to_analyze3 = ['CDQ001','CDQ006','secondary_symptom']
+df3 = df[columns_to_analyze3]
+pain_df = df3[df3['secondary_symptom'].notna()]
 
-agg_data2 = pain_df['secondary_symptom'].value_counts().reset_index()
-agg_data2.columns = ['secondary_symptom', 'Count']
+agg_data3 = pain_df['secondary_symptom'].value_counts().reset_index()
+agg_data3.columns = ['secondary_symptom', 'Count']
 
-pain_chart = alt.Chart(agg_data2).mark_arc().encode(
+pain_chart = alt.Chart(agg_data3).mark_arc().encode(
     theta=alt.Theta(field='Count', type='quantitative', title='Count'),
     color=alt.Color(field='secondary_symptom', type='nominal'),
     tooltip=['secondary_symptom', 'Count']
 ).properties(
     title='Count of Different Symptoms',
     width=600,
-    height=400
-).interactive()
-
-## Heatmap for alcohol intake vs chest pain chances ##
-columns_to_analyze3 = ['alc_Frequency','CDQ001']
-df3 = df[columns_to_analyze3]
-
-heatmap = alt.Chart(df3).mark_rect().encode(
-    x=alt.X('alc_Frequency:O', title='Alcohol Frequency',sort=list(category_mapping.values())),
-    y=alt.Y('CDQ001:O', title='Chest pain'),
-    color=alt.Color('count():Q', title='Count'),
-    tooltip=['alc_Frequency', 'CDQ001', 'count()']
-).properties(
-    title='Interactive Heat Map of Alcohol Frequency and Chest pain',
-    width=400,
     height=400
 ).interactive()
 
@@ -155,6 +165,6 @@ bubble = alt.Chart(df4).mark_circle().encode(
 
 
 st.altair_chart(alc_chart, use_container_width=True)
-st.altair_chart(pain_chart, use_container_width=True)
 st.altair_chart(heatmap, use_container_width=True)
+st.altair_chart(pain_chart, use_container_width=True)
 st.altair_chart(bubble, use_container_width=True)
