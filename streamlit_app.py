@@ -91,13 +91,6 @@ agg_data1.columns = ['Frequency', 'Count']
 # Prepare data for the heatmap
 agg_data2 = df[['alc_Frequency', 'CDQ001']].groupby(['alc_Frequency', 'CDQ001']).size().reset_index(name='Count')
 
-# Create a selection object for linked interaction
-selection = alt.selection_single(
-    fields=['Frequency'],
-    bind='legend',
-    name='selected_frequency'  # Optional: Name the selection for clarity
-)
-
 alc_chart = alt.Chart(agg_data1).mark_bar().encode(
     x=alt.X(
         'Frequency:O', 
@@ -115,10 +108,6 @@ alc_chart = alt.Chart(agg_data1).mark_bar().encode(
         legend=alt.Legend(title="Alcohol Consumption")
     ),
     tooltip=['Frequency', 'Count']
-).add_params(
-    selection
-).transform_filter(
-    selection
 ).properties(
     title='Distribution of Alcohol Consumption Frequency Among Participants (2017-2020)',
     width=600,
