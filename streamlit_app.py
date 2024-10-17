@@ -129,8 +129,8 @@ heatmap = alt.Chart(subset2).mark_rect().encode(
     tooltip=['alc_Frequency', 'CDQ001', 'Count']
 ).properties(
     title=f'Heat Map of relationship between Alcohol Frequency: {alc_cons} and Chest Pain',
-    width=100,
-    height=200
+    width=300,
+    height=600
 )
 
 ## Count of Different Symptoms in Chest Pain ##
