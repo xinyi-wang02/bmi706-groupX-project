@@ -113,8 +113,8 @@ alc_chart = alt.Chart(subset).mark_bar().encode(
     tooltip=['Frequency', 'Count']
 ).properties(
     title='Distribution of Alcohol Consumption Frequency Among Participants (2017-2020)',
-    width=50,
-    height=400
+    width=600,
+    height=300
 )
 
 # Heatmap (Alcohol Frequency vs Chest Pain)
@@ -125,8 +125,8 @@ heatmap = alt.Chart(subset2).mark_rect().encode(
     tooltip=['alc_Frequency', 'CDQ001', 'Count']
 ).properties(
     title='Interactive Heat Map of Alcohol Frequency and Chest Pain',
-    width=50,
-    height=400
+    width=600,
+    height=300
 )
 
 ## Count of Different Symptoms in Chest Pain ##
