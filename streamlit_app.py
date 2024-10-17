@@ -94,15 +94,22 @@ agg_data2 = df[['alc_Frequency', 'CDQ001']].groupby(['alc_Frequency', 'CDQ001'])
 # Create a selection object for linked interaction
 selection = alt.selection_point(
     fields=['Frequency'],
-    bind=input_dropdown
+    bind='legend'
 )
 
 # Pie chart (Alcohol consumption frequency)
-alc_chart = alt.Chart(agg_data1).mark_arc().encode(
-    theta=alt.Theta(field='Count', type='quantitative', title='Number of Participants'),
+alc_chart = alt.Chart(agg_data1).mark_bar().encode(
+    x=alt.X(
+        'Frequency:O', 
+        title='Alcohol Consumption Frequency',
+        sort=list(category_mapping.values())
+    ),
+    y=alt.Y(
+        'Count:Q', 
+        title='Number of Participants'
+    ),
     color=alt.Color(
-        field='Frequency',
-        type='nominal',
+        'Frequency:O',
         sort=list(category_mapping.values()),
         scale=alt.Scale(scheme='tableau20'),
         legend=alt.Legend(title="Alcohol Consumption")
