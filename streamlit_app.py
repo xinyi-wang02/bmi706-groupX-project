@@ -22,7 +22,7 @@ def load_data_preprocess():
     alc_car_bp_asp ['BPQ080'] = alc_car_bp_asp ['BPQ080'].replace({1:'With high cholesterol',2: 'Without high cholesterol', 7: 'Refused', 9: "Don't know"})
     alc_car_bp_asp ['BPQ100D'] = alc_car_bp_asp ['BPQ100D'].replace({1:'Take prescriptn for cholesterol',2: 'Do not take prescriptn for cholesterol', 7: 'Refused', 9: "Don't know"})
 
-    ## interpret asprin related responses ##
+    ## interpret aspirin related responses ##
     alc_car_bp_asp ['RXQ510'] = alc_car_bp_asp ['RXQ510'].replace({1:'Yes', 2: 'No', 7: 'Refused', 9: "Don't know"})
     alc_car_bp_asp ['RXQ515'] = alc_car_bp_asp ['RXQ515'].replace({1:'Take Aspirin',2: 'Do not take aspirin', 3: 'Sometimes Take Aspirin',4: 'Stopped aspirin use due to side effects', 9: "Don't know"})
     alc_car_bp_asp ['RXQ520'] = alc_car_bp_asp ['RXQ520'].replace({1:'Yes',2: 'No', 7: 'Refused', 9: "Don't know"})
@@ -62,7 +62,7 @@ def load_data_preprocess():
     return alc_car_bp_asp
 
 df = load_data_preprocess()
-st.write("## Exploring the associations between alcohol use, asprin use and cardiovascular symptoms with NHANES dataset (2017-2020)")
+st.write("## Exploring the associations between alcohol use, aspirin use and cardiovascular symptoms with NHANES dataset (2017-2020)")
 
 alt.data_transformers.disable_max_rows()
 
@@ -151,13 +151,13 @@ pain_chart = alt.Chart(agg_data3).mark_arc().encode(
     height=400
 ).interactive()
 
-## Bubble plot for asprin use vs chest pain chances ##
+## Bubble plot for aspirin use vs chest pain chances ##
 columns_to_analyze4 = ['RXQ515','CDQ001']
 df4 = df[columns_to_analyze4].groupby(['CDQ001', 'RXQ515']).size().reset_index(name='count')
 
 bubble = alt.Chart(df4).mark_circle().encode(
     x=alt.X('CDQ001:O', title='Whether have chest pain'),
-    y=alt.Y('RXQ515:O', title='Whether Use Asprin'),
+    y=alt.Y('RXQ515:O', title='Whether Use aspirin'),
     size=alt.Size('count:Q', scale=alt.Scale(range=[10, 100])),
     color=alt.Color('count:Q', title='Number of Participants', scale=alt.Scale(scheme='plasma')),
     tooltip=['CDQ001', 'RXQ515', 'count']
