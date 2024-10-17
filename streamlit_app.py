@@ -98,7 +98,7 @@ subset2 = agg_data2[agg_data2['alc_Frequency'] == alc_cons]
 alc_chart = alt.Chart(subset).mark_bar().encode(
     x=alt.X(
         'Frequency:O', 
-        title='Alcohol Consumption Frequency',
+        title='Selected Alcohol Consumption Frequency',
         sort=list(category_mapping.values()),
         axis=alt.Axis(labels=False)
     ),
@@ -121,12 +121,12 @@ alc_chart = alt.Chart(subset).mark_bar().encode(
 
 # Heatmap (Alcohol Frequency vs Chest Pain)
 heatmap = alt.Chart(subset2).mark_rect().encode(
-    x=alt.X('alc_Frequency:O', title='Alcohol Frequency', sort=list(category_mapping.values())),
+    x=alt.X('alc_Frequency:O', title='Selected Alcohol Consumption Frequency', sort=list(category_mapping.values()), axis=alt.Axis(labels=False)),
     y=alt.Y('CDQ001:O', title='Chest Pain'),
     color=alt.Color('Count:Q', title='Count', scale=alt.Scale(scheme='blues')),
     tooltip=['alc_Frequency', 'CDQ001', 'Count']
 ).properties(
-    title='Heat Map of relationship between Alcohol Frequency: {alc_cons} and Chest Pain',
+    title=f'Heat Map of relationship between Alcohol Frequency: {alc_cons} and Chest Pain',
     width=300,
     height=600
 )
