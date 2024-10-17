@@ -144,7 +144,7 @@ agg_data3.columns = ['secondary_symptom', 'Count']
 pain_chart = alt.Chart(agg_data3).mark_arc().encode(
     theta=alt.Theta(field='Count', type='quantitative', title='Count'),
     color=alt.Color(field='secondary_symptom', type='nominal', legend=alt.Legend(title="Cardiovascular Symptom")),
-    tooltip=['Cardiovascular Symptom', 'Count']
+    tooltip=['secondary_symptom', 'Count']
 ).properties(
     title='Distribution of Different Cardiovascular Related Symptoms Among Participants',
     width=600,
