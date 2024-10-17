@@ -87,11 +87,17 @@ agg_data1 = df['alc_Frequency'].value_counts().reset_index()
 agg_data1.columns = ['Frequency', 'Count']
 
 alc_chart = alt.Chart(agg_data1).mark_arc().encode(
-    theta=alt.Theta(field='Count', type='quantitative', title='Count'),
-    color=alt.Color(field='Frequency', type='nominal', sort=list(category_mapping.values()), scale=alt.Scale(scheme='tableau20')),
+    theta=alt.Theta(field='Count', type='quantitative', title='Number of Participants'),
+    color=alt.Color(
+        field='Frequency', 
+        type='nominal', 
+        sort=list(category_mapping.values()), 
+        scale=alt.Scale(scheme='tableau20'),
+        legend=alt.Legend(title="Alcohol Consumption Frequency")
+    ),
     tooltip=['Frequency', 'Count']
 ).properties(
-    title='Frequency of Alcohol intake within a year',
+    title='Distribution of Alcohol Consumption Frequency Among Participants (Past Year)',
     width=600,
     height=400
 ).interactive()
