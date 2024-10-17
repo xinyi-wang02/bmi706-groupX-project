@@ -105,7 +105,9 @@ alc_chart = alt.Chart(agg_data1).mark_arc().encode(
         legend=alt.Legend(title="Alcohol Consumption")
     ),
     tooltip=['Frequency', 'Count']
-).add_selection(
+).add_params(
+    selection
+).transform_filter(
     selection
 ).properties(
     title='Distribution of Alcohol Consumption Frequency Among Participants (2017-2020)',
