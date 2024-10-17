@@ -157,9 +157,9 @@ df4 = df[columns_to_analyze4].groupby(['CDQ001', 'RXQ515']).size().reset_index(n
 
 bubble = alt.Chart(df4).mark_circle().encode(
     x=alt.X('CDQ001:O', title='Whether have chest pain'),
-    y=alt.Y('RXQ515:O', title='RXQ515'),
+    y=alt.Y('RXQ515:O', title='Whether Use Asprin'),
     size=alt.Size('count:Q', title='Count', scale=alt.Scale(range=[10, 100])),
-    color=alt.Color('count:Q', title='Count', scale=alt.Scale(scheme='plasma')),
+    color=alt.Color('count:Q', title='Number of Participants', scale=alt.Scale(scheme='plasma')),
     tooltip=['CDQ001', 'RXQ515', 'count']
 ).properties(
     title='Relationship Between Aspirin Use and Chest Pain Prevalence Among Participants',
