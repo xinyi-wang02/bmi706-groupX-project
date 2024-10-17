@@ -84,7 +84,7 @@ category_mapping = {
     None: 'Missing'}
 
 ## Linked view of alcohol consumption population bar chart and heatmap ##
-# Prepare data for the pie chart
+# Prepare data for the bar chart
 agg_data1 = df['alc_Frequency'].value_counts().reset_index()
 agg_data1.columns = ['Frequency', 'Count']
 alc_cons = st.multiselect("Select Alcohol Consumptions", 
@@ -96,7 +96,7 @@ subset = agg_data1[agg_data1['Frequency'].isin(alc_cons)]
 agg_data2 = df[['alc_Frequency', 'CDQ001']].groupby(['alc_Frequency', 'CDQ001']).size().reset_index(name='Count')
 subset2 = agg_data2[agg_data2['alc_Frequency'].isin(alc_cons)]
 
-# Boxplot (Alcohol Frequency)
+## Boxplot (Alcohol Frequency) ##
 alc_chart = alt.Chart(subset).mark_bar().encode(
     x=alt.X(
         'Frequency:O', 
@@ -121,19 +121,19 @@ alc_chart = alt.Chart(subset).mark_bar().encode(
     height=600
 )
 
-# Heatmap (Alcohol Frequency vs Chest Pain)
+## Heatmap (Alcohol Frequency vs Chest Pain) ##
 heatmap = alt.Chart(subset2).mark_rect().encode(
     x=alt.X('alc_Frequency:O', title='Selected Alcohol Consumption Frequency', sort=list(category_mapping.values()), axis=alt.Axis(labels=False)),
     y=alt.Y('CDQ001:O', title='Chest Pain'),
     color=alt.Color('Count:Q', title='Count', scale=alt.Scale(scheme='blues')),
     tooltip=['alc_Frequency', 'CDQ001', 'Count']
 ).properties(
-    title=f'Heat Map of relationship between Alcohol Frequency: {alc_cons} and Chest Pain',
-    width=300,
-    height=600
+    title=f'Heatmap of relationships between Selected Alcohol Frequency and Chest Pain',
+    width=600,
+    height=300
 )
 
-## Count of Different Symptoms in Chest Pain ##
+## Pie Chart (Cardiovascular symptoms) ##
 columns_to_analyze3 = ['CDQ001','CDQ006','secondary_symptom']
 df3 = df[columns_to_analyze3]
 pain_df = df3[df3['secondary_symptom'].notna()]
@@ -143,10 +143,10 @@ agg_data3.columns = ['secondary_symptom', 'Count']
 
 pain_chart = alt.Chart(agg_data3).mark_arc().encode(
     theta=alt.Theta(field='Count', type='quantitative', title='Count'),
-    color=alt.Color(field='secondary_symptom', type='nominal'),
-    tooltip=['secondary_symptom', 'Count']
+    color=alt.Color(field='secondary_symptom', type='nominal', legend=alt.Legend(title="Cardiovascular Symptom")),
+    tooltip=['Cardiovascular Symptom', 'Count']
 ).properties(
-    title='Count of Different Symptoms',
+    title='Distribution of Different Cardiovascular Related Symptoms Among Participants',
     width=600,
     height=400
 ).interactive()
@@ -162,6 +162,7 @@ bubble = alt.Chart(df4).mark_circle().encode(
     color=alt.Color('count:Q', title='Count', scale=alt.Scale(scheme='plasma')),
     tooltip=['CDQ001', 'RXQ515', 'count']
 ).properties(
+    title='Relationship Between Aspirin Use and Chest Pain Prevalence Among Participants',
     width=300,
     height=300
 ).configure_view(
