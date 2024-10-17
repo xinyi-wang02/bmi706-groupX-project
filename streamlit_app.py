@@ -131,16 +131,11 @@ heatmap = alt.Chart(agg_data2).mark_rect().encode(
     y=alt.Y('CDQ001:O', title='Chest Pain'),
     color=alt.Color('Count:Q', title='Count', scale=alt.Scale(scheme='blues')),
     tooltip=['alc_Frequency', 'CDQ001', 'Count']
-).transform_filter(
-    selection  # Filter based on the selection
 ).properties(
     title='Interactive Heat Map of Alcohol Frequency and Chest Pain',
     width=800,
     height=400
 )
-
-# Display the charts side by side in Streamlit
-#st.altair_chart(alt.hconcat(alc_chart, heatmap).resolve_scale(color='independent'))
 
 ## Count of Different Symptoms in Chest Pain ##
 columns_to_analyze3 = ['CDQ001','CDQ006','secondary_symptom']
