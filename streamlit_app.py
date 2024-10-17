@@ -94,11 +94,13 @@ subset = agg_data1[agg_data1['Frequency'] == alc_cons]
 agg_data2 = df[['alc_Frequency', 'CDQ001']].groupby(['alc_Frequency', 'CDQ001']).size().reset_index(name='Count')
 subset2 = agg_data2[agg_data2['alc_Frequency'] == alc_cons]
 
+# Boxplot (Alcohol Frequency)
 alc_chart = alt.Chart(subset).mark_bar().encode(
     x=alt.X(
         'Frequency:O', 
         title='Alcohol Consumption Frequency',
-        sort=list(category_mapping.values())
+        sort=list(category_mapping.values()),
+        axis=alt.Axis(labels=False)
     ),
     y=alt.Y(
         'Count:Q', 
@@ -113,8 +115,8 @@ alc_chart = alt.Chart(subset).mark_bar().encode(
     tooltip=['Frequency', 'Count']
 ).properties(
     title='Distribution of Alcohol Consumption Frequency Among Participants (2017-2020)',
-    width=600,
-    height=300
+    width=300,
+    height=600
 )
 
 # Heatmap (Alcohol Frequency vs Chest Pain)
@@ -124,9 +126,9 @@ heatmap = alt.Chart(subset2).mark_rect().encode(
     color=alt.Color('Count:Q', title='Count', scale=alt.Scale(scheme='blues')),
     tooltip=['alc_Frequency', 'CDQ001', 'Count']
 ).properties(
-    title='Interactive Heat Map of Alcohol Frequency and Chest Pain',
-    width=600,
-    height=300
+    title='Heat Map of relationship between Alcohol Frequency: {alc_cons} and Chest Pain',
+    width=300,
+    height=600
 )
 
 ## Count of Different Symptoms in Chest Pain ##
