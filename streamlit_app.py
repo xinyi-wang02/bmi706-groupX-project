@@ -92,7 +92,10 @@ agg_data1.columns = ['Frequency', 'Count']
 agg_data2 = df[['alc_Frequency', 'CDQ001']].groupby(['alc_Frequency', 'CDQ001']).size().reset_index(name='Count')
 
 # Create a selection object for linked interaction
-selection = alt.selection_multi(fields=['Frequency'], bind='legend')
+selection = alt.selection_point(
+    fields=['Frequency'],
+    bind=input_dropdown
+)
 
 # Pie chart (Alcohol consumption frequency)
 alc_chart = alt.Chart(agg_data1).mark_arc().encode(
@@ -122,7 +125,7 @@ heatmap = alt.Chart(agg_data2).mark_rect().encode(
     color=alt.Color('Count:Q', title='Count', scale=alt.Scale(scheme='blues')),
     tooltip=['alc_Frequency', 'CDQ001', 'Count']
 ).transform_filter(
-    selection  # Filter the heatmap based on the selection from the pie chart
+    selection
 ).properties(
     title='Interactive Heat Map of Alcohol Frequency and Chest Pain',
     width=800,
